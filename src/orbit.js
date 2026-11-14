@@ -1,7 +1,8 @@
 // Turns a photo into the moving signature picture, made in the browser with
 // gifenc; nothing is uploaded. The photo sits in a circle, a rounded square or
-// a square, on the signature's background, with one of four designs around
-// it: dots on two orbits, a comet running round, a pulse, or a still outline.
+// a square, on a small tile with see-through corners (so in a dark inbox it
+// reads as a little card), with one of four designs around it: dots on two
+// orbits, a comet running round, a pulse, or a still outline.
 
 // 216px drawn, shown at 108 for sharp phone screens; 48 frames of 120ms is
 // about 6 seconds a loop.
@@ -32,8 +33,11 @@ function dot(ctx, [x, y], size, color, alpha = 1) {
 
 export function drawFrame(ctx, photo, t, o) {
   const { shape, design, accent, second, background } = o;
+  ctx.clearRect(0, 0, W, W);
   ctx.fillStyle = background;
-  ctx.fillRect(0, 0, W, W);
+  ctx.beginPath();
+  if (ctx.roundRect) ctx.roundRect(0, 0, W, W, 30); else ctx.rect(0, 0, W, W);
+  ctx.fill();
   if (design === "orbit") {
     // [orbit, start angle, size, colour, turns per loop]: two orbits, one
     // each way, whole turns so the loop has no jump
@@ -104,8 +108,10 @@ export function makeOrbitGif(lib, photo, o) {
     const px = ctx.getImageData(0, 0, W, W).data;
     const idx = lib.applyPalette(px, palette, "rgb444");
     const out = new Uint8Array(idx);
-    if (prev) for (let p = 0; p < idx.length; p++) {
-      if (inside[p * 4 + 3] > 127 || idx[p] === prev[p]) out[p] = T;
+    for (let p = 0; p < idx.length; p++) {
+      // the tile's corners stay see-through; after the first frame only
+      // what changed around the photo is written
+      if (px[p * 4 + 3] < 128 || (prev && (inside[p * 4 + 3] > 127 || idx[p] === prev[p]))) out[p] = T;
     }
     gif.writeFrame(out, W, W, { palette: i ? undefined : full, delay: DELAY,
       transparent: true, transparentIndex: T, dispose: 1 });

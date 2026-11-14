@@ -1,4 +1,4 @@
-// The maker page: the photo studio, the card and the email signature. It
+// The maker page: the photo studio and the email signature. It
 // reads the form, paints the photo, makes the moving picture, keeps the
 // pictures where inboxes can load them (src/storage.js) and copies the
 // signature as rich text for Gmail, Outlook and Apple Mail. The form is
@@ -13,7 +13,7 @@ import * as gifenc from "../vendor/gifenc.esm.js";
 const $ = (s) => document.querySelector(s);
 const form = $("#maker");
 const KEY = "orbit-signature/3";
-const TEXT = ["name", "title", "quote", "company", "logo", "booking", "linkedin", "email", "website", "phone",
+const TEXT = ["name", "title", "company", "logo", "booking", "linkedin", "email", "website", "phone",
   "teamName", "teamEmail", "teamBooking", "teamPhone", "teamWebsite", "teamLinkedin",
   "photoUrl", "iconBase", "badge1", "badge2", "badge3", "badgeLink", "accent", "second", "background",
   "light", "warmth", "zoom", "uploadKey"];
@@ -25,7 +25,7 @@ const SWATCHES = {
 };
 // what config.person / config.team / config.brand fill in
 const PREFILL = {
-  person: { name: "name", title: "title", quote: "quote", email: "email", linkedin: "linkedin", booking: "booking", website: "website", phone: "phone" },
+  person: { name: "name", title: "title", email: "email", linkedin: "linkedin", booking: "booking", website: "website", phone: "phone" },
   team: { name: "teamName", email: "teamEmail", booking: "teamBooking", phone: "teamPhone", website: "teamWebsite", linkedin: "teamLinkedin" },
   brand: { company: "company", logo: "logo", accent: "accent", second: "second", background: "background" },
 };
@@ -187,7 +187,6 @@ function repaint() {
   paintTimer = setTimeout(() => {
     state.photo = finished(480);
     $("#download-photo").disabled = !state.photo;
-    renderCard();
     makeGif();
     store();
   }, 60);
@@ -213,63 +212,6 @@ form.elements.photo.addEventListener("change", async (e) => {
   }
   tiles(); repaint(); storePictures();
 });
-
-/* ---- the card ---- */
-// "*word*" marks the highlight; at most two
-function quoteHtml(text) {
-  const esc = String(text || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-  let n = 0;
-  return esc.replace(/\*([^*]{1,40}?)\*/g, (_, w) => (n++ < 2 ? `<em>${w}</em>` : w)).replace(/\*/g, "");
-}
-function renderCard() {
-  const ph = $("#cp-photo"), b = state.cut && backdrop(state.backdrop);
-  ph.style.backgroundImage = state.photo ? `url(${state.photo.toDataURL("image/jpeg", 0.9)})` : "";
-  ph.textContent = state.photo ? "" : (val("name").trim()[0] || "").toUpperCase();
-  ph.classList.toggle("no-ring", !!b && !b.ring);
-  const card = $("#card-prev");
-  card.style.setProperty("--ring", val("accent"));
-  card.style.setProperty("--hl", val("accent"));
-  ph.style.backgroundColor = val("accent");
-  $("#cp-quote").innerHTML = quoteHtml(val("quote")) || "Your line shows here.";
-}
-
-// The card as a picture, at twice its size on screen.
-function drawCard() {
-  const S = 2, W = 560 * S, pad = 24 * S, P = 92 * S;
-  const quote = String(val("quote") || "").trim() || val("name");
-  const c = document.createElement("canvas"), x = c.getContext("2d");
-  x.font = `400 ${19 * S}px "Gloria Hallelujah", cursive`;
-  // wrap the words, keeping track of the highlighted ones
-  const words = []; let hi = false;
-  for (const part of quote.split(/(\*)/)) { if (part === "*") { hi = !hi; continue; } part.split(/(\s+)/).forEach((w) => w && words.push({ w, hi })); }
-  const maxW = W - pad * 2 - P - 24 * S - 28 * S, lines = [[]]; let lw = 0;
-  for (const t of words) {
-    const w = x.measureText(t.w).width;
-    if (lw + w > maxW && lines.at(-1).length && t.w.trim()) { lines.push([]); lw = 0; }
-    if (!lines.at(-1).length && !t.w.trim()) continue;
-    lines.at(-1).push(t); lw += w;
-  }
-  const lh = 30 * S, bubH = lines.length * lh + 22 * S, H = Math.max(P + pad * 2 + 8 * S, bubH + pad * 2);
-  c.width = W; c.height = H;
-  x.fillStyle = "#fff"; x.beginPath(); x.roundRect(0, 0, W, H, 16 * S); x.fill();
-  const cx = pad + P / 2 + 5 * S, cy = H / 2, b = state.cut && backdrop(state.backdrop), ring = !b || b.ring;
-  if (ring) {
-    x.fillStyle = val("accent"); x.beginPath(); x.arc(cx, cy, P / 2 + 5 * S, 0, 2 * Math.PI); x.fill();
-    x.fillStyle = "#fff"; x.beginPath(); x.arc(cx, cy, P / 2 + 3 * S, 0, 2 * Math.PI); x.fill();
-  }
-  x.save(); x.beginPath(); x.arc(cx, cy, P / 2, 0, 2 * Math.PI); x.clip();
-  if (state.photo) x.drawImage(state.photo, cx - P / 2, cy - P / 2, P, P);
-  else { x.fillStyle = val("accent"); x.fillRect(cx - P / 2, cy - P / 2, P, P); }
-  x.restore();
-  const bx = pad + P + 24 * S, by = (H - bubH) / 2;
-  x.fillStyle = "#f7f3f9"; x.beginPath(); x.roundRect(bx, by, W - bx - pad, bubH, 16 * S); x.fill();
-  x.font = `400 ${19 * S}px "Gloria Hallelujah", cursive`; x.textBaseline = "middle";
-  lines.forEach((l, i) => {
-    let X = bx + 14 * S;
-    for (const t of l) { x.fillStyle = t.hi ? val("accent") : "#1a1a1f"; x.fillText(t.w, X, by + 11 * S + lh * (i + 0.5)); X += x.measureText(t.w).width; }
-  });
-  return c;
-}
 
 /* ---- the moving picture and where it lives ---- */
 // state.gifReady settles when the newest moving photo is made and, with
@@ -366,7 +308,7 @@ function data(forCopy) {
     me: { booking: val("booking"), linkedin: val("linkedin"), email: val("email"), website: val("website"), phone: val("phone") },
     team: { name: val("teamName"), email: val("teamEmail"), booking: val("teamBooking"), phone: val("teamPhone"),
       website: val("teamWebsite"), linkedin: val("teamLinkedin") },
-    contact: val("contact"), accent: val("accent"), background: val("background"),
+    contact: val("contact"), accent: val("accent"),
     badges: [val("badge1"), val("badge2"), val("badge3")].map((src) => ({ src, href: val("badgeLink") })),
   };
 }
@@ -392,9 +334,6 @@ function render() {
     }
     form.elements[f].classList.toggle("own", !preset);
   }
-  // a dark signature sits on a dark sample email, as in a dark inbox
-  $("#mail").classList.toggle("dark", isDark(val("background")));
-  renderCard();
   store();
   warnings();
 }
@@ -447,10 +386,6 @@ function save(href, name) {
 const slug = () => (val("name") || "signature").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "signature";
 $("#download-photo").addEventListener("click", () => { const c = finished(720); if (c) save(c.toDataURL("image/png"), slug() + "-photo.png"); });
 $("#download-gif").addEventListener("click", () => { if (state.gifUrl) save(state.gifUrl, slug() + "-moving-photo.gif"); });
-$("#download-card").addEventListener("click", async () => {
-  await document.fonts.load('400 38px "Gloria Hallelujah"').catch(() => {});
-  save(drawCard().toDataURL("image/png"), slug() + "-card.png");
-});
 
 async function copyRich(html, text) {
   if (navigator.clipboard && window.ClipboardItem) {

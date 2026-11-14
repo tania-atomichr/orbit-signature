@@ -24,6 +24,7 @@
 | **A signature that moves** | Your photo in a circle, a rounded square or a square, with dots orbiting, a comet running round, a pulse, or kept still. |
 | **Your brand, not ours** | Add your logo and it picks up your colours, then makes studio backdrops in them with your logo softly behind your photo. A portal can lock the brand so every signature in the company matches. |
 | **Copy and paste** | Run it with its small server, or inside your own portal, and the pictures are saved for you. Press **Copy signature** and paste it into Gmail, Outlook or Apple Mail. |
+| **Real links, not a picture** | The signature is text and small pictures on your email's own background. Every button is its own link, so people can press it. |
 | **You or your team** | The buttons can reach you, your team (a shared support inbox, say) or both, while your name still signs the email. |
 | **Private** | No account, no tracking, no other sites. Your photo is edited on your device; only the finished pictures are saved, and only where you run it. See [PRIVACY.md](PRIVACY.md). |
 | **Easy to change** | Plain JavaScript, HTML and CSS. No build step, no dependencies. MIT licence. |
@@ -49,7 +50,7 @@ No server? Open `index.html` from any static host, such as GitHub Pages. Everyth
 
 ## Contents
 
-- [What it makes](#what-it-makes): the photo, the signature, the card
+- [What it looks like](#what-it-looks-like)
 - [Everything it does](#everything-it-does)
 - [Run it for your team](#run-it-for-your-team) and [inside your own portal](#inside-your-own-portal)
 - [No server (GitHub Pages)](#no-server-github-pages)
@@ -57,49 +58,52 @@ No server? Open `index.html` from any static host, such as GitHub Pages. Everyth
 - [Contributing](#contributing)
 - [How it compares with the portal it came from](docs/feature-check.md)
 
-## What it makes
+## What it looks like
 
-All pictures here are of a made-up person and company.
+Every picture here comes from the real page, with a made-up person and company.
 
-<p align="center"><img src="docs/demo.gif" width="560" alt="The same signature in four looks: an orbit, a comet, a pulse and a still frame, each with its own backdrop and colours"></p>
+**In an email**, the signature is text and small pictures on the email's own
+background. Each button is its own link (marked here with a dashed line), so
+the people you write to can press it:
 
-**Your brand.** Add your logo (and its symbol, if it has one). The page reads your colours off the logo; change them if they're not quite right.
+![The signature pasted into a new message, with each of its four buttons marked and where it goes](docs/paste-test.png)
+
+**Your brand.** Add your logo (and its symbol, if it has one). The page reads
+your colours off the logo; change them if they're not quite right.
 
 ![Your brand: company name, logo, symbol and the colours read from the logo](docs/brand.png)
 
-**The studio photo.** Upload a photo; the page cuts you out and shows you on backdrops made from your brand: both colours, strong and soft, and a tinted white, with your symbol tone on tone behind your head. Thirteen ready-made backdrops are a press away. Touch up the light, warmth and zoom.
+**The studio photo.** Upload a photo; the page cuts you out and shows you on
+backdrops made from your brand: both colours, strong and soft, and a tinted
+white, with your symbol softly behind your head. Thirteen ready-made
+backdrops are a press away. Touch up the light, warmth and zoom.
 
 ![The photo studio: the original, five brand backdrops with the symbol behind the head, and thirteen more](docs/studio.png)
 
-**The email signature**, in any of four designs, three shapes and your colours:
+**How it moves**: four designs, three shapes, your colours. Only the photo
+sits on a small tile, so it reads as a little card in a dark inbox too.
 
 | Orbit | Comet | Pulse | Still |
 |:---:|:---:|:---:|:---:|
 | <img src="docs/designs/orbit.gif" width="108" alt="Dots orbiting the photo"> | <img src="docs/designs/comet.gif" width="108" alt="A comet running round the photo"> | <img src="docs/designs/pulse.gif" width="108" alt="Rings pulsing out from the photo"> | <img src="docs/designs/still.gif" width="108" alt="A still photo with an outline"> |
 
-![A white signature in the brand's teal, the symbol behind the photo](docs/look-brand-orbit.png)
-![A dark signature with yellow buttons and a square photo](docs/look-night-pulse.png)
+<p align="center"><img src="docs/demo.gif" width="560" alt="The same signature in four looks: an orbit, a comet, a pulse and a still frame, each with its own backdrop and colours"></p>
 
-**Who people reach.** The buttons can go to you, to your team, or both:
+**Who people reach.** The buttons can go to you, to your team (a shared
+support inbox, say), or both, while your name still signs the email:
 
 ![A signature with your buttons and your team's](docs/contact-both.png)
 
-**Your card**: your photo and one line in your own voice, with a highlighted word. Download it for a website, a team page or a slide.
-
-![The card](docs/card.png)
-
 **The whole page**, at a desk and on a phone:
 
-| | |
-|:---:|:---:|
-| <img src="docs/page-1280.png" width="520" alt="The page at 1280px wide"> | <img src="docs/page-390.png" width="200" alt="The page on a phone"> |
+<p><img src="docs/page-1280.png" width="540" alt="The page at 1280px wide"> &nbsp; <img src="docs/page-390.png" width="200" alt="The page on a phone"></p>
 
 ## Everything it does
 
 **Your brand**
 - Upload your logo and, if it has one, its symbol.
 - Your brand colour and a second colour are read off the logo (the most used colourful shade, then one of a clearly different hue); change either, or pick from presets.
-- The signature's background colour, from presets or your own.
+- The colour of the small tile behind the moving photo, from presets or your own. The signature itself has no background.
 
 **Photo studio**
 - Cuts you out of the photo in the browser with a small model (U²-Net, 4.5 MB): soft hair edges, the old wall's colour taken out of the edges, and anything that isn't you (a chair, a lamp) dropped.
@@ -112,16 +116,12 @@ All pictures here are of a made-up person and company.
 
 **Email signature**
 - The moving photo: orbit, comet, pulse or still, in a circle, rounded square or square, made in the browser as a GIF of about 50 to 90 KB.
-- Name, title, and company as a name or your logo.
+- Name, title, and company as a name or your logo, as real text on the email's own background.
 - Round buttons for a booking page, LinkedIn, email, website and phone, in your brand colour, with icons that stay readable on light and dark colours.
 - Buttons that reach you, your team, or both rows, labelled.
 - Up to three small badges next to your name, linking to one page.
 - Built for inboxes: tables and inline styles only, Arial, PNG icons (Gmail drops SVG), alt text on every picture, and a plain-text copy for mail set to plain text.
 - **Copy signature**, **Copy HTML**, and steps for Gmail, Outlook and Apple Mail.
-
-**Card**
-- Your photo with a ring on pale backdrops, and your line in a speech bubble with a *highlighted* word.
-- Download it as a picture.
 
 **For teams and portals**
 - One file decides where pictures are kept ([`src/storage.js`](src/storage.js)); swap it for your own storage.
@@ -232,7 +232,7 @@ npm test
 
 `test/unit.mjs` checks the signature builder: escaping, unsafe links, colours, team buttons. `test/e2e.mjs` drives the real page in Chromium, with its server and as plain files: cutting out a photo, every backdrop, design and shape, saving pictures, copying, a portal's settings, the server's limits, and no sideways scroll at 1280 or 390 pixels wide.
 
-`npm run docs` remakes the pictures in `docs/`, including the walkthrough.
+`npm run docs` remakes the pictures in `docs/`, including the walkthrough and the paste test (which also fails if a button is not its own link).
 
 **Not covered by the tests:** how the pasted signature looks in each mail app, and browsers other than Chromium (Safari, Firefox). Reports are welcome.
 

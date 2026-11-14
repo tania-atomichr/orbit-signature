@@ -8,4 +8,4 @@ Checked in so the page runs with no build step and loads nothing from other site
 | `ort/` | [ONNX Runtime Web](https://github.com/microsoft/onnxruntime) 1.20.1 (`ort.wasm.min.js` and its WebAssembly): runs the cut-out model in the browser | MIT, © Microsoft Corporation |
 | `u2netp.onnx` | U²-Net (small) by Xuebin Qin et al., [U-2-Net](https://github.com/xuebinqin/U-2-Net): finds the person in a photo | Apache License 2.0 |
 
-The fonts in `../fonts/` are [League Spartan](https://github.com/theleagueof/league-spartan) and [Gloria Hallelujah](https://fonts.google.com/specimen/Gloria+Hallelujah), both under the SIL Open Font License 1.1.
+The font in `../fonts/` is [League Spartan](https://github.com/theleagueof/league-spartan) (the variable version, Latin letters, from Fontsource 5.3.0), under the SIL Open Font License 1.1.

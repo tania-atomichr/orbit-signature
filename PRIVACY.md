@@ -24,7 +24,7 @@ They are sent so that the people you email can load them; that is how email
 signatures work. Your original photo, the cut-out, and everything typed into
 the form are never sent.
 
-Downloads (the photo, the card, the moving photo) are made in the browser
+Downloads (the photo and the moving photo) are made in the browser
 and saved straight to your device.
 
 ## On the server

@@ -45,7 +45,6 @@ async function fillBasics(page) {
   await page.fill("[name=name]", "Alex Rivera");
   await page.fill("[name=title]", "Head of growth");
   await page.fill("[name=company]", "Northwind");
-  await page.fill("[name=quote]", "I help teams hire *faster*. Ask me anything.");
   await page.fill("[name=booking]", "calendly.com/alex-rivera");
   await page.fill("[name=linkedin]", "linkedin.com/in/alex-rivera");
   await page.fill("[name=email]", "alex@northwind.example");
@@ -82,8 +81,7 @@ async function fillBasics(page) {
   await page.dispatchEvent("[name=light]", "input");
   assert.equal(await page.getAttribute(".tile[data-key=purple]", "aria-pressed"), "true");
   assert.equal(await page.getAttribute("#download-photo", "disabled"), null);
-  assert.match(await page.innerHTML("#cp-quote"), /<em>faster<\/em>/);
-  ok("backdrop, halo and light change the photo; the card highlights *faster*");
+  ok("backdrop, halo and light change the photo");
 
   await statusIs(page, /Ready to copy/);
   await page.click("#copy");
@@ -185,9 +183,21 @@ async function fillBasics(page) {
   }
   ok("every shape and design makes a moving picture");
 
+  const before = await page.getAttribute("#preview img[width='108']", "src");
   await page.click(".colours[data-for=background] .sw-b[title=Black]");
-  assert.match(await page.locator("#preview table").first().getAttribute("bgcolor"), /#1a1a1f/);
-  ok("a background swatch changes the signature");
+  await page.waitForFunction((b) => document.querySelector("#preview img[width='108']")?.src !== b, before);
+  assert.equal(await page.locator("#preview table").first().getAttribute("bgcolor"), null);
+  // the tile is black, its corners see-through
+  const px = await page.evaluate(async () => {
+    const img = document.querySelector("#preview img[width='108']");
+    await img.decode();
+    const c = document.createElement("canvas"); c.width = c.height = 216;
+    const x = c.getContext("2d"); x.drawImage(img, 0, 0, 216, 216);
+    return [x.getImageData(1, 1, 1, 1).data[3], [...x.getImageData(14, 14, 1, 1).data].slice(0, 3)];
+  });
+  assert.equal(px[0], 0);
+  assert(px[1].every((v) => v < 60), String(px[1]));
+  ok("the tile colour changes only the moving photo; the signature has no background");
 
   await page.check("input[name=contact][value=both]", { force: true });
   await page.fill("[name=teamName]", "Support team");

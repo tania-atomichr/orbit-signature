@@ -56,12 +56,19 @@ ok("team mode: buttons reach the team, the person still signs", () => {
   assert(!m.includes("support@x.co"));
 });
 
-ok("dark backgrounds get light text, light brand colours get dark icons", () => {
+ok("no background box: only the buttons carry a colour, each its own link", () => {
   assert(isDark("#1a1a1f") && !isDark("#ffffff") && !isDark("#f2c050"));
-  const dk = buildSignature({ name: "A", background: "#1a1a1f", accent: "#f2c050", me: { email: "a@b.co" } }, base).html;
-  assert(dk.includes("color:#ffffff") && dk.includes("dark/mail.png") && dk.includes('bgcolor="#f2c050"'));
-  const bad = buildSignature({ name: "A", background: "red;x", accent: "url(x)" }, base).html;
-  assert(bad.includes('bgcolor="#ffffff"') && !bad.includes("url(x)"));
+  const s = buildSignature({ name: "A", background: "#1a1a1f", accent: "#f2c050",
+    me: { email: "a@b.co", booking: "cal.com/a", linkedin: "linkedin.com/in/a", website: "a.co" } }, base).html;
+  // every bgcolor is a button's, none is the signature's
+  const colours = [...s.matchAll(/bgcolor="([^"]+)"/g)].map((m) => m[1]);
+  assert.equal(colours.length, 4);
+  assert(colours.every((c) => c === "#f2c050"));
+  assert(!/<table[^>]*bgcolor/.test(s) && !/<table[^>]*background:/.test(s));
+  assert.equal([...s.matchAll(/<a href=/g)].length, 4);
+  assert(s.includes("dark/mail.png"));
+  const bad = buildSignature({ name: "A", accent: "url(x)", me: { email: "a@b.co" } }, base).html;
+  assert(!bad.includes("url(x)") && bad.includes('bgcolor="#1a1a1f"'));
 });
 
 console.log(`${n} checks passed`);

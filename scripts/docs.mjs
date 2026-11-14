@@ -47,7 +47,7 @@ async function look(o) {
 }
 const card = () => page.locator("#preview > table");
 
-await set({ name: "Alex Rivera", title: "Head of growth", company: "Northwind", quote: "I help teams hire *faster*. Ask me anything.",
+await set({ name: "Alex Rivera", title: "Head of growth", company: "Northwind",
   booking: "calendly.com/alex-rivera", linkedin: "linkedin.com/in/alex-rivera", email: "alex@northwind.example",
   website: "northwind.example", teamName: "Support team", teamEmail: "support@northwind.example",
   teamBooking: "calendly.com/northwind-support", teamWebsite: "help.northwind.example" });
@@ -90,11 +90,10 @@ for (const c of ["me", "team", "both"]) {
 }
 
 
-// the studio: the backdrops, and the card, in the brand's colours
+// the studio: the backdrops, in the brand's colours
 await set({ accent: "#1f7a6d", second: "#f2c050" });
 await look(LOOKS[0][1]);
 await page.locator("#studio").screenshot({ path: join(docs, "studio.png") });
-await page.locator("#card-prev").screenshot({ path: join(docs, "card.png") });
 
 // the whole page, at a desk and on a phone (a viewport as tall as the page,
 // so the sticky preview sits where it would)
@@ -106,13 +105,13 @@ for (const w of [1280, 390]) {
 
 // GitHub's social preview: 1280x640
 await page.setViewportSize({ width: 1280, height: 640 });
-await page.setContent(`<!doctype html><html><head><style>@font-face{font-family:"League Spartan";font-weight:900;src:url("${url}fonts/league-spartan-900.woff2")}</style></head>
-<body style="margin:0;width:1280px;height:640px;background:#1a1a1f;display:flex;align-items:center;font-family:'League Spartan',Arial,sans-serif">
-<div style="padding:0 90px;flex:1">
-<div style="color:#F2C050;font-size:30px;font-weight:900;margin-bottom:14px">Orbit signature</div>
-<div style="color:#fff;font-size:68px;line-height:1.02;font-weight:700;letter-spacing:-1px;font-weight:900">A signature<br>that moves,<br>in every email</div>
-<div style="color:#b4b4bc;font-size:26px;margin-top:22px;font-family:Arial,sans-serif">Free, open source, runs in your browser</div></div>
-<div style="padding-right:150px;transform:scale(1.45);transform-origin:right center">${await card().evaluate((e) => e.outerHTML)}</div></body></html>`.replace('src="data:', 'src="data:'));
+await page.setContent(`<!doctype html><html><head><style>@font-face{font-family:"League Spartan";font-weight:100 900;src:url("${url}fonts/league-spartan.woff2")}</style></head>
+<body style="margin:0;width:1280px;height:640px;background:#f7f7f5;color:#111;display:flex;align-items:center;font-family:'League Spartan',Arial,sans-serif">
+<div style="padding:0 0 0 90px;flex:1">
+<div style="display:inline-flex;align-items:center;gap:12px;font-size:26px;font-weight:800;margin-bottom:22px"><span style="background:#111;color:#fff;border-radius:999px;padding:6px 16px 4px;font-size:17px;font-weight:700">Orbit</span>Orbit signature</div>
+<div style="font-size:72px;line-height:1.02;font-weight:800;letter-spacing:-1px">A signature<br>that <span style="color:#9140B0">moves</span>,<br>in every email.</div>
+<div style="color:#4b4b4b;font-size:26px;margin-top:22px">Free, open source, runs in your browser</div></div>
+<div style="margin-right:80px;background:#fff;border:1px solid #e3e3e3;border-radius:28px;padding:34px 40px;box-shadow:0 18px 50px rgba(0,0,0,.08)"><div style="transform:scale(1.25);transform-origin:left top;width:430px;height:150px">${await card().evaluate((e) => e.outerHTML)}</div></div></body></html>`);
 await page.waitForTimeout(800);
 await page.screenshot({ path: join(docs, "social-preview.png"), scale: "css" });
 

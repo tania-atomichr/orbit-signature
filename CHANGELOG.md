@@ -6,6 +6,25 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- The signature has no background box: name, title, logo and buttons sit on
+  the email's own background, and each button is its own link. The colour
+  that was the signature's background is now the small tile behind the
+  moving photo, whose corners are see-through.
+- The page takes the look of Pile Sprint: League Spartan throughout, a hero,
+  solid colour icons, pill buttons.
+- A more lifelike sample person in the pictures.
+
+### Removed
+
+- The card (photo with a line in a speech bubble) and its line field.
+
+### Added
+
+- `scripts/paste-proof.mjs`: pastes a copied signature into a message body
+  and checks each button is its own link with no box behind it.
+
 ## [1.0.0] - 2026-11-14
 
 ### Added
@@ -19,9 +38,8 @@ All notable changes are listed here. The format follows
 - Email signature: moving photo in four designs (orbit, comet, pulse, still)
   and three shapes; name, title, company or logo; buttons for booking,
   LinkedIn, email, website and phone; buttons for you, your team or both;
-  up to three badges; brand colour, second colour and background; rich-text
+  up to three badges; brand colour and second colour; rich-text
   and HTML copy; steps for Gmail, Outlook and Apple Mail.
-- Card: photo and your line with a highlighted word, as a picture.
 - `src/storage.js` and `src/config.js` for running it inside a portal:
   storage, prefilled details, locked brand.
 - `server.mjs`: serves the page and keeps the pictures, with an optional team

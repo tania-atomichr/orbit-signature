@@ -1,9 +1,8 @@
 // Builds the signature itself: the HTML that goes on the clipboard and a
 // plain-text copy for mail set to plain text. Mail apps keep only tables and
 // inline styles, drop web fonts and SVG, and often block images, so the text
-// is Arial, the icons are PNGs and every image has alt text. The card's
-// background is set twice (bgcolor and style) because Outlook reads one and
-// Gmail the other.
+// is Arial, the icons are PNGs and every image has alt text. Colours are set
+// twice (bgcolor and style) because Outlook reads one and Gmail the other.
 
 const FONT = "font-family:Arial,Helvetica,sans-serif";
 
@@ -72,16 +71,14 @@ function linkList(src, iconBase, glyph, who) {
  * d: { name, title, company, logo, photo, badges: [{src, href}],
  *      me: {booking, linkedin, email, website, phone},
  *      team: {name, booking, linkedin, email, website, phone},
- *      contact: "me" | "team" | "both", background, accent }
+ *      contact: "me" | "team" | "both", accent }
  * iconBase: address of the folder holding icons/light and icons/dark.
  */
 export function buildSignature(d, iconBase) {
-  const bg = hex(d.background, "#ffffff");
+  // No background of its own: the signature sits on the email, like any
+  // other text, so the name, the logo and each button stay separate.
   const accent = hex(d.accent, "#1a1a1f");
-  const dark = isDark(bg);
-  const ink = dark ? "#ffffff" : "#1a1a1f";
-  const ink2 = dark ? "#d6d6dc" : "#45454d";
-  const ink3 = dark ? "#b4b4bc" : "#6b6b75";
+  const ink = "#1a1a1f", ink2 = "#45454d", ink3 = "#6b6b75";
   const glyph = isDark(accent) ? "light" : "dark";
 
   const contact = ["me", "team", "both"].includes(d.contact) ? d.contact : "me";
@@ -128,10 +125,10 @@ export function buildSignature(d, iconBase) {
     row(team, teamName || (contact === "both" ? "Team" : ""));
 
   const html =
-    `<table cellpadding="0" cellspacing="0" border="0" bgcolor="${bg}" style="border-collapse:separate;background:${bg};border-radius:16px"><tr>` +
-    `<td style="padding:14px 0 14px 14px;vertical-align:middle">` +
+    `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse"><tr>` +
+    `<td style="padding:0;vertical-align:middle">` +
     (photo ? `<img src="${esc(photo)}" width="108" height="108" alt="${esc(name)}" style="display:block;width:108px;height:108px;border:0">` : "") +
-    `</td><td style="padding:14px 18px 8px ${photo ? "14px" : "4px"};vertical-align:middle">` +
+    `</td><td style="padding:0 0 0 ${photo ? "16px" : "0"};vertical-align:middle">` +
     `<div style="${FONT};font-size:20px;line-height:24px;font-weight:bold;color:${ink};margin:0 0 3px;white-space:nowrap">${esc(name)}${badgeHtml}</div>` +
     (who ? `<div style="${FONT};font-size:14px;line-height:22px;color:${ink2};margin:0 0 10px;white-space:nowrap">${who}</div>` : "") +
     linkHtml +
@@ -142,5 +139,5 @@ export function buildSignature(d, iconBase) {
   const role = title && company ? `${title} at ${company}` : title || company;
   const text = [name, role, ...mine.map((l) => `${l.label}: ${l.shown}`),
     ...team.map((l) => `${l.label}: ${l.shown}`)].filter(Boolean).join("\n");
-  return { html, text, bg, accent };
+  return { html, text, accent };
 }
