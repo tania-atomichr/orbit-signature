@@ -1,0 +1,48 @@
+name: Bug report
+description: Something does not work as it should.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "Thanks for reporting. Please don't attach photos of real people or anything private. For a security problem, use the Security tab instead."
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Upload a photo\n2. Pick the Purple backdrop\n3. ..."
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where it went wrong
+      options:
+        - On the page
+        - After pasting into Gmail
+        - After pasting into Outlook
+        - After pasting into Apple Mail
+        - In someone else's inbox
+        - The server
+        - Somewhere else
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Browser and mail app
+      placeholder: "Chrome 131 on macOS, Gmail on the web"
+    validations:
+      required: true
+  - type: textarea
+    id: errors
+    attributes:
+      label: Errors
+      description: Anything in the browser console, or the server's output.
+      render: text
