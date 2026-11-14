@@ -13,7 +13,7 @@ Orbit signature started as the Profile page of an in-house recruiting portal. Ev
 | Glow, halo, soft key light, corner fall-off, floor, shadow | Same paint recipe |
 | Halo shapes | Circle, asterisk, star, none, plus your logo softly behind you |
 | Light, warmth and zoom sliders | Same |
-| "Original" tile to keep the photo as it was | Same |
+| "Original" tile to keep the photo as it was | Same, plus **Blur**: your own background softly out of focus |
 | Our orbit moving picture | Orbit, comet, pulse or still, in a circle, rounded square or square |
 | The company's own colours | Your accent, second and background colours, picked from your logo |
 | The company's own logo | Your logo and symbol |

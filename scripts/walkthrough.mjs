@@ -14,6 +14,7 @@ await rm(out, { recursive: true, force: true });
 await mkdir(out, { recursive: true });
 const port = 23457;
 const child = spawn(process.execPath, [join(root, "server.mjs")], { env: { ...process.env, PORT: String(port), DATA_DIR: join(out, "data"), PUBLIC_URL: "https://signature.example.com" }, stdio: "ignore" });
+process.on("exit", () => child.kill()); // a failed step must not leave the server running
 await new Promise((r) => setTimeout(r, 800));
 const browser = await chromium.launch();
 const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, permissions: ["clipboard-read", "clipboard-write"] });
@@ -43,7 +44,7 @@ await shot(10);
 // the photo field sits lower; bring it into view with the preview beside it
 await page.locator("[name=photo]").scrollIntoViewIfNeeded();
 await page.evaluate(() => window.scrollBy(0, -140));
-await page.setInputFiles("[name=photo]", join(root, "docs/sample-photo.png"));
+await page.setInputFiles("[name=photo]", join(root, "docs/photos/brooke-balentine.jpg"));
 await page.waitForFunction(() => document.querySelectorAll("#tiles .tile").length >= 5, null, { timeout: 90000 });
 await ready();
 await shot(12);

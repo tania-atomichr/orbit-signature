@@ -6,7 +6,7 @@
 import config from "./config.js";
 import { buildSignature, isDark } from "./signature.js";
 import { makeOrbitGif } from "./orbit.js";
-import { BACKDROPS, brandBackdrops, logoColours, cutOut, cover, adjust, paint } from "./studio.js";
+import { BACKDROPS, brandBackdrops, logoColours, cutOut, cover, adjust, paint, blurred } from "./studio.js";
 import { storageInfo, savePicture } from "./storage.js";
 import * as gifenc from "../vendor/gifenc.esm.js";
 
@@ -31,6 +31,7 @@ const PREFILL = {
 
 const state = {
   original: null,  // the photo as uploaded, square
+  bg: null,        // the same square as the cut-out, from the photo as taken (for Blur)
   cut: null,       // the person on transparent, head anchored
   backdrop: "",    // "" = the original photo
   photo: null,     // the finished square photo (canvas)
@@ -57,6 +58,7 @@ function storePictures() {
     if (state.logoUrl) localStorage.setItem(KEY + "/logo", state.logoUrl);
     if (state.markImg && state.markImg.src.startsWith("data:")) localStorage.setItem(KEY + "/mark", state.markImg.src);
     if (state.cut) localStorage.setItem(KEY + "/cut", state.cut.toDataURL("image/png"));
+    if (state.bg) localStorage.setItem(KEY + "/bg", state.bg.toDataURL("image/jpeg", 0.8));
     if (state.original) localStorage.setItem(KEY + "/original", state.original.toDataURL("image/jpeg", 0.88));
   } catch (_) { /* too big or private: the photo just isn't remembered */ }
 }
@@ -79,6 +81,8 @@ async function restorePictures() {
     if (mk) state.markImg = await loadImage(mk);
     if (orig) state.original = cover(await loadImage(orig));
     if (cut) { const im = await loadImage(cut); state.cut = cover(im); }
+    const bg = localStorage.getItem(KEY + "/bg");
+    if (bg) state.bg = cover(await loadImage(bg));
   } catch (_) { /* start fresh */ }
   if (state.original) { $("#studio").hidden = false; tiles(); repaint(); }
   render();
@@ -134,7 +138,9 @@ function mark() { return state.markImg || state.logoImg; }
 function backdrop(key) { return backdrops().find((b) => b.key === key); }
 function touch() { return { light: +val("light"), warmth: +val("warmth"), zoom: +val("zoom") }; }
 
+const BLUR = { key: "blur", label: "Blur" };
 function finished(size) {
+  if (state.backdrop === "blur" && state.cut && state.bg) return blurred(adjust(state.cut, touch()), adjust(state.bg, touch()), size);
   const b = state.cut && backdrop(state.backdrop);
   if (!b) {
     if (!state.original) return null;
@@ -150,7 +156,8 @@ function tile(b, small) {
   btn.type = "button"; btn.className = "tile"; btn.dataset.key = b.key;
   btn.setAttribute("aria-pressed", b.key === state.backdrop ? "true" : "false");
   let c;
-  if (b.key) c = paint(small, b, 112, val("halo"), mark());
+  if (b.key === "blur") c = blurred(small, adjust(state.bg, { zoom: +val("zoom") }), 112);
+  else if (b.key) c = paint(small, b, 112, val("halo"), mark());
   else { c = document.createElement("canvas"); c.width = c.height = 112; c.getContext("2d").drawImage(state.original, 0, 0, 112, 112); }
   c.setAttribute("aria-hidden", "true");
   const t = document.createElement("span"); t.textContent = b.label;
@@ -160,7 +167,7 @@ function tile(b, small) {
 // your brand's backdrops up front, the ready-made ones a press away
 function tiles() {
   const small = state.cut ? adjust(state.cut, { zoom: +val("zoom") }) : null;
-  $("#tiles").replaceChildren(...[{ key: "", label: "Original" }, ...(state.cut ? brandSet() : [])].map((b) => tile(b, small)));
+  $("#tiles").replaceChildren(...[{ key: "", label: "Original" }, ...(state.cut && state.bg ? [BLUR] : []), ...(state.cut ? brandSet() : [])].map((b) => tile(b, small)));
   const more = $("#more-backdrops"), open = more.getAttribute("aria-expanded") === "true" || BACKDROPS.some((b) => b.key === state.backdrop);
   more.hidden = !state.cut;
   more.setAttribute("aria-expanded", open ? "true" : "false");
@@ -196,14 +203,15 @@ form.elements.photo.addEventListener("change", async (e) => {
   if (!f) return;
   let img;
   try { img = await loadImage(await readFile(f)); } catch (_) { studioSay("That file isn't a picture this browser can read. Try a JPG or PNG."); return; }
-  state.original = cover(img); state.cut = null;
-  if (!backdrop(state.backdrop)) state.backdrop = "";
+  state.original = cover(img); state.cut = null; state.bg = null;
+  if (!backdrop(state.backdrop) && state.backdrop !== "blur") state.backdrop = "";
   $("#studio").hidden = false;
   tiles(); repaint();
   studioSay("Cutting you out of the photo… (the first time takes a few seconds)");
   try {
     const timeout = new Promise((_, no) => setTimeout(() => no(new Error("timeout")), 60000));
     state.cut = await Promise.race([cutOut(img, config.vendor), timeout]);
+    state.bg = state.cut.bg || null;
     if (!state.backdrop) state.backdrop = "brand-soft";
     studioSay("");
   } catch (_) {

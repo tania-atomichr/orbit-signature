@@ -16,7 +16,7 @@ All notable changes are listed here. The format follows
   ripples from a steady ring, and a still ring that blends the two colours.
 - The page takes the look of Pile Sprint: League Spartan throughout, a hero,
   solid colour icons, pill buttons.
-- A more lifelike sample person in the pictures.
+- Real sample photos (Unsplash, credited in the README) in place of drawings.
 
 ### Removed
 
@@ -24,6 +24,7 @@ All notable changes are listed here. The format follows
 
 ### Added
 
+- Blur backdrop: your own background, softly out of focus, you sharp in front.
 - `scripts/paste-proof.mjs`: pastes a copied signature into a message body
   and checks each button is its own link with no box behind it.
 

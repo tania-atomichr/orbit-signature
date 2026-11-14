@@ -11,7 +11,7 @@ import { serve } from "./serve.mjs";
 const { chromium } = createRequire(import.meta.url)("playwright");
 
 const root = resolve(new URL("..", import.meta.url).pathname);
-const photo = join(root, "docs/sample-photo.png"), logo = join(root, "docs/sample-logo.png");
+const photo = join(root, "docs/photos/brooke-balentine.jpg"), logo = join(root, "docs/sample-logo.png");
 let n = 0;
 const ok = (name) => { n++; console.log("ok -", name); };
 
@@ -67,10 +67,11 @@ async function fillBasics(page) {
   ok("a logo sets the brand colours");
 
   await page.setInputFiles("[name=photo]", photo);
-  await page.waitForFunction(() => document.querySelectorAll("#tiles .tile").length === 6, null, { timeout: 90000 });
+  await page.waitForFunction(() => document.querySelectorAll("#tiles .tile").length === 7, null, { timeout: 90000 });
   assert.equal(await page.textContent("#studio-status"), "");
   assert.equal(await page.getAttribute(".tile[data-key=brand-soft]", "aria-pressed"), "true");
-  ok("the photo is cut out onto the brand's own backdrops: Original + 5");
+  assert.equal(await page.locator("#tiles .tile[data-key=blur]").count(), 1);
+  ok("the photo is cut out onto the brand's own backdrops: Original, Blur + 5");
   await page.click("#more-backdrops");
   assert.equal(await page.locator("#tiles-more .tile").count(), 13);
   ok("13 more backdrops a press away");
@@ -204,7 +205,7 @@ async function fillBasics(page) {
 
   await page.reload();
   assert.equal(await page.inputValue("[name=name]"), "Alex Rivera");
-  await page.waitForFunction(() => document.querySelectorAll("#tiles .tile").length === 6, null, { timeout: 10000 });
+  await page.waitForFunction(() => document.querySelectorAll("#tiles .tile").length === 7, null, { timeout: 10000 });
   ok("the form and the photo are remembered after a reload");
 
   await page.click("#tab-outlook");

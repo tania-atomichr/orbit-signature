@@ -17,6 +17,7 @@ await mkdir(frames, { recursive: true });
 // the real server, so the photo studio and saving work as for a team
 const port = 23456;
 const child = spawn(process.execPath, [join(root, "server.mjs")], { env: { ...process.env, PORT: String(port), DATA_DIR: join(frames, "data"), PUBLIC_URL: "https://signature.example.com" }, stdio: "ignore" });
+process.on("exit", () => child.kill()); // a failed step must not leave the server running
 await new Promise((r) => setTimeout(r, 800));
 const url = `http://127.0.0.1:${port}/`;
 const browser = await chromium.launch();
@@ -46,6 +47,12 @@ async function look(o) {
   await page.waitForTimeout(300);
 }
 const card = () => page.locator("#preview > table");
+// the preview is redrawn as pictures finish saving, so a shot can miss it once
+async function snap(o) {
+  for (let i = 0; ; i++) {
+    try { return await card().screenshot(o); } catch (e) { if (i > 4) throw e; await page.waitForTimeout(300); }
+  }
+}
 
 await set({ name: "Alex Rivera", title: "Head of growth", company: "Northwind",
   booking: "calendly.com/alex-rivera", linkedin: "linkedin.com/in/alex-rivera", email: "alex@northwind.example",
@@ -55,7 +62,7 @@ await set({ name: "Alex Rivera", title: "Head of growth", company: "Northwind",
 await page.setInputFiles("[name=logoFile]", join(root, "docs/sample-logo.png"));
 await page.setInputFiles("[name=markFile]", join(root, "docs/sample-mark.png"));
 await page.locator("form fieldset.card").first().screenshot({ path: join(docs, "brand.png") });
-await page.setInputFiles("[name=photo]", join(root, "docs/sample-photo.png"));
+await page.setInputFiles("[name=photo]", join(root, "docs/photos/brooke-balentine.jpg"));
 await page.waitForFunction(() => document.querySelectorAll("#tiles .tile").length >= 5, null, { timeout: 90000 });
 await ready();
 
@@ -69,13 +76,13 @@ const LOOKS = [
 let f = 0;
 for (const [name, o] of LOOKS) {
   await look(o);
-  await card().screenshot({ path: join(docs, `look-${name}.png`) });
+  await snap({ path: join(docs, `look-${name}.png`) });
   // the moving picture itself, as the inbox shows it
   const gif = await page.evaluate(() => document.querySelector("#preview img[width='108']").src);
   await writeFile(join(docs, "designs", `${o.design}.gif`), Buffer.from(gif.split(",")[1], "base64"));
   // frames for the demo: ~1.6s of each look
   for (let i = 0; i < 14; i++) {
-    await card().screenshot({ path: join(frames, `${String(f++).padStart(3, "0")}.png`), scale: "css" });
+    await snap({ path: join(frames, `${String(f++).padStart(3, "0")}.png`), scale: "css" });
     await page.waitForTimeout(110);
   }
 }
@@ -86,7 +93,7 @@ await look(LOOKS[0][1]);
 for (const c of ["me", "team", "both"]) {
   await set({ contact: c });
   await page.waitForTimeout(100);
-  await card().screenshot({ path: join(docs, `contact-${c}.png`) });
+  await snap({ path: join(docs, `contact-${c}.png`) });
 }
 
 
@@ -115,6 +122,29 @@ await page.setContent(`<!doctype html><html><head><style>@font-face{font-family:
 await page.waitForTimeout(800);
 await page.screenshot({ path: join(docs, "social-preview.png"), scale: "css" });
 
+await page.goto(url);
+await page.setViewportSize({ width: 1280, height: 900 });
+// three people, three looks: one blurs their own background
+const PEOPLE = [
+  ["philip-white.jpg", "Sam Ortiz", "Customer success", "blur", "circle", "orbit"],
+  ["brooke-balentine.jpg", "Alex Rivera", "Head of growth", "brand-soft", "circle", "comet"],
+  ["devin-santiago.jpg", "Jordan Lee", "Talent partner", "second", "rounded", "pulse"],
+];
+const shots = [];
+for (const [file, name, title, bd, shape, design] of PEOPLE) {
+  await set({ name, title, shape, design, contact: "me" });
+  await page.evaluate(() => { document.querySelector("#status").textContent = ""; });
+  await page.evaluate(() => { document.querySelector("#tiles").replaceChildren(); });
+  await page.setInputFiles("[name=photo]", join(root, "docs/photos", file));
+  await page.waitForFunction(() => !/Cutting/.test(document.querySelector("#studio-status").textContent) && document.querySelector(".tile[data-key=blur]"), null, { timeout: 90000 });
+  await page.click(`.tile[data-key=${bd}]`);
+  await ready(); await page.waitForTimeout(300);
+  shots.push(await snap());
+}
+// stacked into one picture
+await page.setContent(`<body style="margin:0"><div id="ppl" style="background:#fff;padding:18px 22px;display:inline-grid;gap:24px">${shots.map((b) => `<img src="data:image/png;base64,${b.toString("base64")}" onload="this.style.width=this.naturalWidth/2+'px'">`).join("")}</div></body>`);
+await page.waitForTimeout(300);
+await page.locator("#ppl").screenshot({ path: join(docs, "people.png") });
 await browser.close();
 child.kill();
 console.log("docs pictures written");

@@ -60,7 +60,13 @@ No server? Open `index.html` from any static host, such as GitHub Pages. Everyth
 
 ## What it looks like
 
-Every picture here comes from the real page, with a made-up person and company.
+Every picture here comes from the real page, with a made-up company and
+free photos from Unsplash ([credits](#photo-credits)).
+
+**Three people, three looks.** One keeps their own background, softly blurred;
+the others are on studio backdrops in the company's colours:
+
+![Three signatures: one on a blurred background, one on a soft brand backdrop with a comet, one on a yellow backdrop with ripples](docs/people.png)
 
 **In an email**, the signature is text and small pictures on the email's own
 background. Each button is its own link (marked here with a dashed line), so
@@ -109,6 +115,7 @@ support inbox, say), or both, while your name still signs the email:
 - Cuts you out of the photo in the browser with a small model (U²-Net, 4.5 MB): soft hair edges, the old wall's colour taken out of the edges, and anything that isn't you (a chair, a lamp) dropped.
 - Frames you by your head, so every face sits in the same place.
 - Backdrops made from your brand: brand and second colour, each strong and soft, and a white tinted with your brand.
+- **Blur**: keep your own background, softly out of focus, with you sharp in front.
 - 13 ready-made backdrops too (purple, white, lilac, yellow, green, pink, blue, orange and five soft ones), or keep the original.
 - Each backdrop has a glow behind your head, your symbol or logo tone on tone behind it (or a circle, asterisk, star, or nothing), light pooled behind you with the corners in shade, and a soft shadow as from a window.
 - Touch-ups: light, warmth and zoom.
@@ -243,3 +250,13 @@ Bug reports, ideas and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIB
 ## Licence
 
 MIT. See [LICENSE](LICENSE). Third-party files keep their own licences, listed in [vendor/README.md](vendor/README.md).
+
+### Photo credits
+
+The sample photos in [`docs/photos/`](docs/photos) are from Unsplash, under the [Unsplash License](https://unsplash.com/license), not MIT:
+
+- Photo by [Brooke Balentine](https://unsplash.com/@brookebalentine) on [Unsplash](https://unsplash.com/photos/a-smiling-woman-poses-in-front-of-a-wall-xSEFkIAopxA)
+- Photo by [Philip White](https://unsplash.com/@philipwhite) on [Unsplash](https://unsplash.com/photos/a-woman-standing-in-front-of-a-sculpture-O3D-teBz0Bg)
+- Photo by [Devin Santiago](https://unsplash.com/@ydcphotography) on [Unsplash](https://unsplash.com/photos/a-young-woman-with-blonde-hair-smiles-ij6JGuYzCd4)
+
+The names in the pictures are made up.

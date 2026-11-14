@@ -12,6 +12,7 @@ const root = resolve(new URL("..", import.meta.url).pathname);
 const data = join(root, "docs/.paste");
 const port = 23458;
 const child = spawn(process.execPath, [join(root, "server.mjs")], { env: { ...process.env, PORT: String(port), DATA_DIR: data, PUBLIC_URL: `http://127.0.0.1:${port}` }, stdio: "ignore" });
+process.on("exit", () => child.kill()); // a failed step must not leave the server running
 await new Promise((r) => setTimeout(r, 800));
 const browser = await chromium.launch();
 const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, permissions: ["clipboard-read", "clipboard-write"] });
@@ -26,7 +27,7 @@ await page.fill("[name=booking]", "calendly.com/alex-rivera");
 await page.fill("[name=linkedin]", "linkedin.com/in/alex-rivera");
 await page.fill("[name=email]", "alex@northwind.example");
 await page.fill("[name=website]", "northwind.example");
-await page.setInputFiles("[name=photo]", join(root, "docs/sample-photo.png"));
+await page.setInputFiles("[name=photo]", join(root, "docs/photos/brooke-balentine.jpg"));
 await page.waitForFunction(() => /Ready to copy/.test(document.querySelector("#status").textContent), null, { timeout: 90000 });
 await page.click("#copy");
 await page.waitForFunction(() => /Copied/.test(document.querySelector("#status").textContent));

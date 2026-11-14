@@ -238,7 +238,7 @@ export function cover(img, size = SIDE) {
 }
 
 // the square around the head, so every face sits in the same place
-function frame(person, rgbaPx, w, h) {
+function frame(person, rgbaPx, w, h, full) {
   let top = 0;
   for (top = 0; top < h; top++) {
     let row = 0;
@@ -260,6 +260,8 @@ function frame(person, rgbaPx, w, h) {
   x0 = Math.max(0, Math.min(x0, w - side));
   const c = canvas(SIDE, SIDE);
   c.getContext("2d").drawImage(person, x0, y0, side, side, 0, 0, SIDE, SIDE);
+  // the same square of the photo as taken, for the Blur backdrop
+  if (full) { c.bg = canvas(SIDE, SIDE); c.bg.getContext("2d").drawImage(full, x0, y0, side, side, 0, 0, SIDE, SIDE); }
   return c;
 }
 
@@ -292,7 +294,7 @@ export async function cutOut(img, base) {
   const px = fx.getImageData(0, 0, w, h).data;
   const out = refine(px, mask, w, h);
   const person = canvas(w, h); person.getContext("2d").putImageData(new ImageData(out, w, h), 0, 0);
-  return frame(person, out, w, h);
+  return frame(person, out, w, h, full);
 }
 
 /* ---- touch-ups: light, warmth, zoom ---- */
@@ -359,6 +361,28 @@ function haloShape(x, kind, size, color, k, mark) {
     x.beginPath(); x.arc(50, 50, 40, 0, 2 * Math.PI); x.fill();
   }
   x.restore();
+}
+
+// The person's own background, softly out of focus, with them sharp in
+// front, as a portrait lens would. The blur is a shrink and grow, which every
+// browser can do (canvas filters are missing in some).
+export function blurred(cut, bg, size) {
+  const c = canvas(size, size), x = c.getContext("2d");
+  x.imageSmoothingEnabled = true; x.imageSmoothingQuality = "high";
+  let src = bg;
+  for (const s of [96, 40, 20]) {
+    const t = canvas(s, s), tx = t.getContext("2d");
+    tx.imageSmoothingQuality = "high"; tx.drawImage(src, 0, 0, s, s); src = t;
+  }
+  // a little larger than the frame, so the soft edges fall outside it
+  const o = size * 0.04;
+  x.drawImage(src, -o, -o, size + 2 * o, size + 2 * o);
+  // a touch darker round the edges, so the eye goes to the face
+  const v = x.createRadialGradient(size * 0.5, size * 0.42, size * 0.25, size * 0.5, size * 0.5, size * 0.75);
+  v.addColorStop(0, "rgba(0,0,0,0)"); v.addColorStop(1, "rgba(0,0,0,0.22)");
+  x.fillStyle = v; x.fillRect(0, 0, size, size);
+  x.drawImage(cut, 0, 0, size, size);
+  return c;
 }
 
 // paints the cut-out person on a backdrop; returns a size x size canvas
