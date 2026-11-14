@@ -80,12 +80,13 @@ backdrops are a press away. Touch up the light, warmth and zoom.
 
 ![The photo studio: the original, five brand backdrops with the symbol behind the head, and thirteen more](docs/studio.png)
 
-**How it moves**: four designs, three shapes, your colours. Only the photo
-sits on a small tile, so it reads as a little card in a dark inbox too.
+**How it moves**: four designs, three shapes, your colours. The photo sits on
+a white tile with see-through corners, so in a dark inbox it reads as a
+little card.
 
-| Orbit | Comet | Pulse | Still |
+| Orbit | Comet | Ripple | Still |
 |:---:|:---:|:---:|:---:|
-| <img src="docs/designs/orbit.gif" width="108" alt="Dots orbiting the photo"> | <img src="docs/designs/comet.gif" width="108" alt="A comet running round the photo"> | <img src="docs/designs/pulse.gif" width="108" alt="Rings pulsing out from the photo"> | <img src="docs/designs/still.gif" width="108" alt="A still photo with an outline"> |
+| <img src="docs/designs/orbit.gif" width="108" alt="Dots orbiting the photo"> | <img src="docs/designs/comet.gif" width="108" alt="A comet running round the photo"> | <img src="docs/designs/pulse.gif" width="108" alt="Soft rings rippling out from the photo"> | <img src="docs/designs/still.gif" width="108" alt="A still photo in a ring that blends the two colours"> |
 
 <p align="center"><img src="docs/demo.gif" width="560" alt="The same signature in four looks: an orbit, a comet, a pulse and a still frame, each with its own backdrop and colours"></p>
 
@@ -103,7 +104,6 @@ support inbox, say), or both, while your name still signs the email:
 **Your brand**
 - Upload your logo and, if it has one, its symbol.
 - Your brand colour and a second colour are read off the logo (the most used colourful shade, then one of a clearly different hue); change either, or pick from presets.
-- The colour of the small tile behind the moving photo, from presets or your own. The signature itself has no background.
 
 **Photo studio**
 - Cuts you out of the photo in the browser with a small model (U²-Net, 4.5 MB): soft hair edges, the old wall's colour taken out of the edges, and anything that isn't you (a chair, a lamp) dropped.

@@ -9,9 +9,11 @@ All notable changes are listed here. The format follows
 ### Changed
 
 - The signature has no background box: name, title, logo and buttons sit on
-  the email's own background, and each button is its own link. The colour
-  that was the signature's background is now the small tile behind the
-  moving photo, whose corners are see-through.
+  the email's own background, and each button is its own link. The moving
+  photo sits on a white tile with see-through corners; the background colour
+  choice is gone.
+- Comet, pulse (now "Ripple") and still redrawn: a tapering comet tail, eased
+  ripples from a steady ring, and a still ring that blends the two colours.
 - The page takes the look of Pile Sprint: League Spartan throughout, a hero,
   solid colour icons, pill buttons.
 - A more lifelike sample person in the pictures.

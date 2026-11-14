@@ -61,10 +61,10 @@ await ready();
 
 // the looks: the same person in four styles
 const LOOKS = [
-  ["brand-orbit", { background: "#ffffff", shape: "circle", design: "orbit", contact: "me", backdrop: "brand-soft", halo: "logo" }],
-  ["brand-comet", { background: "#fdf3dc", shape: "rounded", design: "comet", contact: "me", backdrop: "brand", halo: "logo" }],
-  ["night-pulse", { background: "#1a1a1f", accent: "#f2c050", second: "#9140b0", shape: "square", design: "pulse", contact: "me", backdrop: "purple", halo: "asterisk" }],
-  ["pink-still", { background: "#f3e9f7", accent: "#a92e64", second: "#a92e64", shape: "circle", design: "still", contact: "me", backdrop: "softpink", halo: "none" }],
+  ["brand-orbit", { shape: "circle", design: "orbit", contact: "me", backdrop: "brand-soft", halo: "logo" }],
+  ["brand-comet", { shape: "rounded", design: "comet", contact: "me", backdrop: "brand", halo: "logo" }],
+  ["purple-ripple", { accent: "#9140b0", second: "#f2c050", shape: "circle", design: "pulse", contact: "me", backdrop: "purple", halo: "asterisk" }],
+  ["pink-still", { accent: "#a92e64", second: "#f2c050", shape: "rounded", design: "still", contact: "me", backdrop: "softpink", halo: "none" }],
 ];
 let f = 0;
 for (const [name, o] of LOOKS) {

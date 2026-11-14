@@ -17,13 +17,13 @@ const DEFAULTS = {
   // Sent with each upload as X-Upload-Key, for a server that wants one.
   uploadKey: "",
   // What the form starts with: the signed-in person's details.
-  person: {},  // name, title, email, linkedin, booking, website, phone, quote
+  person: {},  // name, title, email, linkedin, booking, website, phone
   team: {},    // name, email, booking, phone, website, linkedin
   // The company's look: company, logo and mark (public URLs; mark is the symbol
-  // drawn behind the photo), accent, second, background, backdrop
+  // drawn behind the photo), accent, second, backdrop
   brand: {},
   // Fields people can't change, so every signature matches, e.g.
-  // ["company", "logo", "accent", "second", "background", "team"]
+  // ["company", "logo", "accent", "second", "team"]
   locked: [],
   // Where vendor/ (the model and onnxruntime) is served from.
   vendor: new URL("../vendor/", import.meta.url).href,

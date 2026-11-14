@@ -15,19 +15,18 @@ const form = $("#maker");
 const KEY = "orbit-signature/3";
 const TEXT = ["name", "title", "company", "logo", "booking", "linkedin", "email", "website", "phone",
   "teamName", "teamEmail", "teamBooking", "teamPhone", "teamWebsite", "teamLinkedin",
-  "photoUrl", "iconBase", "badge1", "badge2", "badge3", "badgeLink", "accent", "second", "background",
+  "photoUrl", "iconBase", "badge1", "badge2", "badge3", "badgeLink", "accent", "second",
   "light", "warmth", "zoom", "uploadKey"];
 const RADIOS = ["shape", "design", "contact", "halo"];
 const SWATCHES = {
   accent: [["#9140b0", "Purple"], ["#1a1a1f", "Black"], ["#a92e64", "Pink"], ["#1f7a6d", "Teal"], ["#2f5bd3", "Blue"], ["#e2553f", "Coral"]],
   second: [["#f2c050", "Yellow"], ["#9140b0", "Purple"], ["#1a1a1f", "Black"], ["#7fd1c0", "Mint"], ["#f4a3b4", "Rose"], ["#a0a0aa", "Grey"]],
-  background: [["#ffffff", "White"], ["#f7f6f9", "Paper"], ["#f3e9f7", "Soft purple"], ["#fdf3dc", "Soft yellow"], ["#1a1a1f", "Black"], ["#2b1838", "Night purple"]],
 };
 // what config.person / config.team / config.brand fill in
 const PREFILL = {
   person: { name: "name", title: "title", email: "email", linkedin: "linkedin", booking: "booking", website: "website", phone: "phone" },
   team: { name: "teamName", email: "teamEmail", booking: "teamBooking", phone: "teamPhone", website: "teamWebsite", linkedin: "teamLinkedin" },
-  brand: { company: "company", logo: "logo", accent: "accent", second: "second", background: "background" },
+  brand: { company: "company", logo: "logo", accent: "accent", second: "second" },
 };
 
 const state = {
@@ -229,7 +228,7 @@ function makeGif() {
     await new Promise((r) => setTimeout(r, 20)); // let the message paint first
     if (run !== gifRun) return;
     const blob = makeOrbitGif(gifenc, state.photo, {
-      shape: val("shape"), design: val("design"), accent: val("accent"), second: val("second"), background: val("background"),
+      shape: val("shape"), design: val("design"), accent: val("accent"), second: val("second"), background: "#ffffff",
     });
     state.gif = blob; state.gifUrl = await readFile(blob); state.gifHosted = "";
     $("#download-gif").disabled = false;
@@ -354,7 +353,7 @@ function warnings() {
 /* ---- the form ---- */
 // these change the photo itself, the moving picture, or only the signature around it
 const PHOTO = new Set(["light", "warmth", "zoom", "halo"]);
-const GIF = new Set(["shape", "design", "background"]);
+const GIF = new Set(["shape", "design"]);
 form.addEventListener("input", (e) => {
   const n = e.target.name;
   if (e.target.type === "file") return;

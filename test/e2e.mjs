@@ -183,11 +183,8 @@ async function fillBasics(page) {
   }
   ok("every shape and design makes a moving picture");
 
-  const before = await page.getAttribute("#preview img[width='108']", "src");
-  await page.click(".colours[data-for=background] .sw-b[title=Black]");
-  await page.waitForFunction((b) => document.querySelector("#preview img[width='108']")?.src !== b, before);
   assert.equal(await page.locator("#preview table").first().getAttribute("bgcolor"), null);
-  // the tile is black, its corners see-through
+  // a white tile, its corners see-through
   const px = await page.evaluate(async () => {
     const img = document.querySelector("#preview img[width='108']");
     await img.decode();
@@ -196,8 +193,8 @@ async function fillBasics(page) {
     return [x.getImageData(1, 1, 1, 1).data[3], [...x.getImageData(14, 14, 1, 1).data].slice(0, 3)];
   });
   assert.equal(px[0], 0);
-  assert(px[1].every((v) => v < 60), String(px[1]));
-  ok("the tile colour changes only the moving photo; the signature has no background");
+  assert(px[1].every((v) => v > 240), String(px[1]));
+  ok("the photo sits on a white tile with see-through corners; the signature has no background");
 
   await page.check("input[name=contact][value=both]", { force: true });
   await page.fill("[name=teamName]", "Support team");

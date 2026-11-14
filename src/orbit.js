@@ -1,8 +1,8 @@
 // Turns a photo into the moving signature picture, made in the browser with
 // gifenc; nothing is uploaded. The photo sits in a circle, a rounded square or
-// a square, on a small tile with see-through corners (so in a dark inbox it
+// a square, on a white tile with see-through corners (so in a dark inbox it
 // reads as a little card), with one of four designs around it: dots on two
-// orbits, a comet running round, a pulse, or a still outline.
+// orbits, a comet running round, ripples, or a still two-colour ring.
 
 // 216px drawn, shown at 108 for sharp phone screens; 48 frames of 120ms is
 // about 6 seconds a loop.
@@ -46,21 +46,45 @@ export function drawFrame(ctx, photo, t, o) {
       dot(ctx, at(d[1] + 2 * Math.PI * d[4] * t, d[0], shape), d[2], d[3]);
     }
   } else if (design === "comet") {
-    ctx.strokeStyle = second; ctx.globalAlpha = 0.35; ctx.lineWidth = 3;
+    // a faint track, and a comet whose tail thickens and brightens towards
+    // its head, one whole turn per loop
+    ctx.strokeStyle = second; ctx.globalAlpha = 0.28; ctx.lineWidth = 2;
     path(ctx, R + 14, shape); ctx.stroke(); ctx.globalAlpha = 1;
-    for (let k = 14; k >= 0; k--) {
-      dot(ctx, at(2 * Math.PI * t - Math.PI / 2 - k * 0.09, R + 14, shape), 7 - k * 0.4, accent, 1 - k / 16);
+    const head = 2 * Math.PI * t - Math.PI / 2, N = 36, span = 1.9;
+    ctx.lineCap = "round"; ctx.strokeStyle = accent;
+    for (let k = 0; k < N; k++) {
+      const f = k / N, a0 = head - span * (1 - f), a1 = head - span * (1 - (k + 1) / N);
+      const [x0, y0] = at(a0, R + 14, shape), [x1, y1] = at(a1, R + 14, shape);
+      ctx.globalAlpha = f * f; ctx.lineWidth = 1 + 6 * f;
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
     }
+    ctx.globalAlpha = 1;
+    const h = at(head, R + 14, shape);
+    dot(ctx, h, 8, "#ffffff"); dot(ctx, h, 6, accent);
+    ctx.lineCap = "butt";
   } else if (design === "pulse") {
+    // a steady ring, and two soft ripples leaving it, eased so they slow as
+    // they fade
+    ctx.strokeStyle = accent; ctx.lineWidth = 3;
+    path(ctx, R + 5, shape); ctx.stroke();
     for (const [off, col] of [[0, accent], [0.5, second]]) {
-      const p = (t + off) % 1;
-      ctx.strokeStyle = col; ctx.lineWidth = 6 - 4 * p; ctx.globalAlpha = 1 - p;
-      path(ctx, R + 4 + 24 * p, shape); ctx.stroke();
+      const p = (t + off) % 1, e = 1 - (1 - p) ** 2;
+      ctx.strokeStyle = col; ctx.lineWidth = 3.5 - 2.5 * p; ctx.globalAlpha = 0.85 * (1 - p);
+      path(ctx, R + 6 + 20 * e, shape); ctx.stroke();
     }
     ctx.globalAlpha = 1;
   } else {
-    ctx.strokeStyle = accent; ctx.lineWidth = 5;
-    path(ctx, R + 9, shape); ctx.stroke();
+    // still: a ring blending the two colours, and one small dot, so the
+    // first frame Outlook shows looks finished on its own
+    let g = accent;
+    if (ctx.createConicGradient) {
+      g = ctx.createConicGradient(-Math.PI / 2, C, C);
+      g.addColorStop(0, accent); g.addColorStop(0.5, second); g.addColorStop(1, accent);
+    }
+    ctx.strokeStyle = g; ctx.lineWidth = 5;
+    path(ctx, R + 8, shape); ctx.stroke();
+    const d = at(-Math.PI / 4, R + 8, shape);
+    dot(ctx, d, 9, "#ffffff"); dot(ctx, d, 6.5, second);
   }
   ctx.save();
   path(ctx, R, shape); ctx.clip();
