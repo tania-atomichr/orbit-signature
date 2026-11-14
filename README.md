@@ -14,7 +14,7 @@
   <img src="https://img.shields.io/badge/dependencies-none-555.svg" alt="No dependencies">
 </p>
 
-<p align="center"><img src="docs/demo.gif" width="560" alt="The same signature in four looks: an orbit, a comet, a pulse and a still frame, each with its own backdrop and colours"></p>
+<p align="center"><img src="docs/walkthrough.gif" width="800" alt="Adding a company and logo, uploading a photo, trying three backdrops and three moving designs, then pressing Copy signature"></p>
 
 ## Why use it
 
@@ -30,7 +30,12 @@
 
 ## Quick start
 
-You need [Node.js](https://nodejs.org) 18 or newer.
+**Try it:** download the code (green **Code** button, then **Download ZIP**),
+unzip it, open a terminal in the folder and run `node server.mjs`
+([Node.js](https://nodejs.org) 18 or newer). Open http://localhost:8080, add a
+photo and press **Copy signature**.
+
+**Run it for your team:**
 
 ```sh
 git clone https://github.com/tania-atomichr/orbit-signature.git
@@ -50,10 +55,13 @@ No server? Open `index.html` from any static host, such as GitHub Pages. Everyth
 - [No server (GitHub Pages)](#no-server-github-pages)
 - [Privacy](#privacy), [How it is built](#how-it-is-built), [Test](#test)
 - [Contributing](#contributing)
+- [How it compares with the portal it came from](docs/feature-check.md)
 
 ## What it makes
 
 All pictures here are of a made-up person and company.
+
+<p align="center"><img src="docs/demo.gif" width="560" alt="The same signature in four looks: an orbit, a comet, a pulse and a still frame, each with its own backdrop and colours"></p>
 
 **Your brand.** Add your logo (and its symbol, if it has one). The page reads your colours off the logo; change them if they're not quite right.
 
@@ -224,7 +232,7 @@ npm test
 
 `test/unit.mjs` checks the signature builder: escaping, unsafe links, colours, team buttons. `test/e2e.mjs` drives the real page in Chromium, with its server and as plain files: cutting out a photo, every backdrop, design and shape, saving pictures, copying, a portal's settings, the server's limits, and no sideways scroll at 1280 or 390 pixels wide.
 
-`node scripts/docs.mjs && python3 scripts/demo_gif.py` remakes the pictures in `docs/`.
+`npm run docs` remakes the pictures in `docs/`, including the walkthrough.
 
 **Not covered by the tests:** how the pasted signature looks in each mail app, and browsers other than Chromium (Safari, Firefox). Reports are welcome.
 

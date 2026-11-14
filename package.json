@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node server.mjs",
     "test": "node test/unit.mjs && node test/e2e.mjs",
-    "docs": "node scripts/docs.mjs && python3 scripts/demo_gif.py"
+    "docs": "node scripts/docs.mjs && python3 scripts/demo_gif.py && node scripts/walkthrough.mjs && python3 scripts/walkthrough_gif.py"
   },
   "devDependencies": {
     "playwright": "^1.48.0"
