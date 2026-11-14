@@ -63,11 +63,14 @@ const json = (res, code, obj) => send(res, code, JSON.stringify(obj), { "content
 
 async function readBody(req) {
   const chunks = []; let n = 0;
+  // an oversized body is read to the end (up to a hard stop) before the 413,
+  // because closing mid-upload makes the sender see a reset instead of the answer
   for await (const c of req) {
     n += c.length;
-    if (n > MAX) throw Object.assign(new Error("too big"), { code: 413 });
-    chunks.push(c);
+    if (n > 8 * MAX) break;
+    if (n <= MAX) chunks.push(c);
   }
+  if (n > MAX) throw Object.assign(new Error("too big"), { code: 413 });
   return Buffer.concat(chunks);
 }
 
